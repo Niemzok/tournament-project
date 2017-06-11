@@ -113,20 +113,24 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    db = connect()
-    c = db.cursor()
-    c.execute("SELECT id,name FROM player;")
-    results = c.fetchall()
-    players = [result for result in results]
-    db.close()
+    standings = playerStandings()
     pairings = []
-    no_pairings = int(len(players)/2)
-    for i in range(no_pairings):
-        i1 = randint(0,len(players)-1)
-        p1 = players[i1]
-        del players[i1]
-        i2 = randint(0,len(players)-1)
-        p2 = players[i2]
-        del players[i2]
-        pairings.append((p1+p2))
+    win_groups = {}
+    for player in standings:
+        if player[2] in win_groups:
+            win_groups[player[2]].append(player)
+        else:
+            win_groups[player[2]] = [player]
+    print win_groups
+    for key in win_groups:
+        players = win_groups[key]
+        no_pairings = int(len(players)/2)
+        for i in range(no_pairings):
+            i1 = randint(0,len(players)-1)
+            p1 = (players[i1][0],players[i1][1])
+            del players[i1]
+            i2 = randint(0,len(players)-1)
+            p2 = (players[i2][0],players[i2][1])
+            del players[i2]
+            pairings.append((p1+p2))
     return pairings
